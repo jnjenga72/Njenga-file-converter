@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NJENGA Files Converter</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a90e2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        :root {
+            --bg-body: #f4f4f9;
+            --bg-card: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --border-dashed: #a0a0a0;
+            --upload-bg: #fafafa;
+            --upload-hover: #eef6ff;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
+        body.dark-mode {
+            --bg-body: #181818;
+            --bg-card: #242424;
+            --text-primary: #f5f5f5;
+            --text-secondary: #b0b0b0;
+            --border-dashed: #555555;
+            --upload-bg: #2a2a2a;
+            --upload-hover: #333333;
+            --shadow-color: rgba(0,0,0,0.4);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-body);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s ease;
+        }
+        .container {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+        }
+        h1 {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .upload-area {
+            border: 2px dashed var(--border-dashed);
+            border-radius: 8px;
+            padding: 2.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            background-color: var(--upload-bg);
+            color: var(--text-secondary);
+        }
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #4a90e2;
+            background-color: var(--upload-hover);
+        }
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        button:not(:disabled):hover {
+            background-color: #357abd;
+        }
+        #status {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            min-height: 1.2em;
+        }
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+        .theme-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: auto;
+            padding: 8px;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+        }
+        .theme-btn:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        body.dark-mode .theme-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="theme-toggle" class="theme-btn" title="Toggle Theme">🌙</button>
+        <div class="logo">
+            <svg width="52" height="52" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#8e44ad;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="2" dy="3" stdDeviation="3" flood-opacity="0.2"/>
+                    </filter>
+                </defs>
+                <!-- Layered Document Design -->
+                <rect x="25" y="15" width="45" height="60" rx="6" fill="url(#logoGradient)" filter="url(#shadow)" transform="rotate(-6 47.5 45)" opacity="0.8"/>
+                <rect x="30" y="20" width="45" height="60" rx="6" fill="#ffffff" stroke="url(#logoGradient)" stroke-width="3" filter="url(#shadow)"/>
+                <!-- Conversion/N Symbol -->
+                <path d="M42 40 L50 40 L50 60 L62 60" stroke="url(#logoGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <!-- Success Badge -->
+                <circle cx="70" cy="70" r="14" fill="#4a90e2" stroke="white" stroke-width="2"/>
+                <path d="M64 70 L68 74 L76 66" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+            NJENGA
+        </div>
+        <h1>Files Converter</h1>
+        <div class="upload-area" id="drop-zone">
+            <p id="file-label">Click or Drag PDF here</p>
+            <input type="file" id="file-input" accept=".pdf" hidden>
+        </div>
+        <button id="convert-btn" disabled>Convert to Word</button>
+        <div id="status"></div>
+        <div class="footer">
+            &copy; 2024 NJENGA Files Converter. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
+        }
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileLabel = document.getElementById('file-label');
+        const convertBtn = document.getElementById('convert-btn');
+        const statusDiv = document.getElementById('status');
+        const themeToggle = document.getElementById('theme-toggle');
+        let selectedFile = null;
+
+        // Theme Logic
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Trigger file input on click
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // Handle file selection via input
+        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+        // Drag and Drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (file && file.type === 'application/pdf') {
+                selectedFile = file;
+                fileLabel.textContent = file.name;
+                convertBtn.disabled = false;
+                statusDiv.textContent = '';
+            } else {
+                selectedFile = null;
+                fileLabel.textContent = 'Click or Drag PDF here';
+                convertBtn.disabled = true;
+                statusDiv.textContent = 'Please select a valid PDF file.';
+                statusDiv.style.color = '#d9534f';
+            }
+            // Allow re-selecting the same file if needed by resetting input value
+            fileInput.value = '';
+        }
+
+        convertBtn.addEventListener('click', () => {
+            if (!selectedFile) return;
+
+            // UI Update for processing
+            convertBtn.disabled = true;
+            const originalText = convertBtn.textContent;
+            convertBtn.textContent = 'Converting...';
+            statusDiv.textContent = 'Processing file...';
+            statusDiv.style.color = '#555';
+
+            // SIMULATION of API call
+            // To make this real, you would create a backend endpoint (e.g. /convert)
+            // and send the 'selectedFile' using FormData.
+            setTimeout(() => {
+                convertBtn.textContent = originalText;
+                convertBtn.disabled = false;
+                statusDiv.textContent = 'Ready for backend integration!';
+                statusDiv.style.color = '#28a745';
+                alert(`This is a frontend demo.\n\nFile "${selectedFile.name}" would be sent to a server here.`);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
